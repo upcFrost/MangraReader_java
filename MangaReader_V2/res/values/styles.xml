@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="small_stars" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/stars_small</item>
+        <item name="android:minHeight">22dip</item>
+        <item name="android:maxHeight">22dip</item>
+    </style>
+    <style name="tabwidget_no_line_hack">
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

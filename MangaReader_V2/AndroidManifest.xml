@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.snowball.mangareader"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="7" />
+    
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:icon="@drawable/mangareader_logo_128x128"
+        android:label="@string/app_name"
+        android:name=".MangaReader"
+        android:theme="@style/tabwidget_no_line_hack"
+        android:debuggable="true" >
+        <activity
+            android:label="@string/app_name"
+            android:name=".Main"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".LibraryActivity"></activity>
+        <activity android:name=".ImageActivity" 
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" ></activity>
+        <activity android:name=".BookActivity"></activity>
+    </application>
+
+</manifest>

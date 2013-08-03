@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, Boot!</string>
+    <string name="app_name">MangaReader_V2</string>
+    <string name="name_label">NAME</string>
+    <string name="author_label">AUTHOR</string>
+    <string name="rating_label">RATING</string>
+    <string name="bookcount_label">SERIES</string>
+    <string name="genre_label">GENRE</string>
+    <string name="about_label">ABOUT</string>
+    <string name="downloading_label">DOWNLOADING</string>
+    <string name="language_label">LANGUAGE</string>
+
+</resources>

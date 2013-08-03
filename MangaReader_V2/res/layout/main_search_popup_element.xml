@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_library_popup_element_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:background="@drawable/more_info_button_selector" >
+
+    <Button
+        android:id="@+id/main_library_popup_element_start_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/pause" />
+
+    <com.snowball.mangareader.interface_code.TextProgressBar
+        android:id="@+id/main_library_popup_element_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:max="100"
+        android:progress="50"
+        android:indeterminate="false"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:layout_margin="2dp"
+        android:progressDrawable="@drawable/progress_bar_drawable" />
+
+    <Button
+        android:id="@+id/main_library_popup_element_cancel_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/delete_btn" />
+</LinearLayout>

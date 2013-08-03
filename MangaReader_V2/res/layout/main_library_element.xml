@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_library_element_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/grid_background_selector"
+    android:orientation="horizontal"
+    android:padding="3dp" >
+
+    <ImageView
+        android:id="@+id/main_library_element_book_cover"
+        android:layout_width="54dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="5dp"
+        android:src="@drawable/ic_launcher" />
+
+    <RelativeLayout
+        android:id="@+id/main_library_element_info_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/main_library_element_book_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="TextView"
+            android:textColor="#0f2233"
+            android:textSize="11dp"
+            android:textStyle="bold"
+            android:maxLines="3" />
+
+        <TextView
+            android:id="@+id/main_library_element_book_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/main_library_element_book_name"
+            android:text="TextView"
+            android:textColor="#0f2233"
+            android:textSize="10dp"
+            android:maxLines="1" />
+
+        <View
+            android:id="@+id/mail_library_element_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.snowball.mangareader.interface_code.TextProgressBar
+            android:id="@+id/main_library_element_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="12dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:max="100"
+            android:progress="50"
+            android:progressDrawable="@drawable/progress_bar_drawable" />
+
+        <RelativeLayout
+            android:id="@+id/main_library_element_rating_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/main_library_element_progress"
+            android:layout_alignParentLeft="true" >
+
+            <RatingBar
+                android:id="@+id/main_library_element_book_rating"
+                android:layout_width="50dp"
+                android:layout_height="10dp"
+                android:isIndicator="true"
+                android:max="5"
+                android:progressDrawable="@drawable/stars_small"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:rating="2"
+                android:stepSize="1"
+                android:layout_margin="2dp" />
+
+            <ImageView
+                android:id="@+id/main_library_element_download_btn"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/download"
+                android:layout_margin="2dp" />
+
+    </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

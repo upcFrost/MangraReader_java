@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/main_search_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/tab_layout_shape"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/main_search_search_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp" >
+
+            <EditText
+                android:id="@+id/main_search_textfield"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/search_field_background"
+                android:focusable="true" >
+
+                <requestFocus />
+            </EditText>
+
+            <Button
+                android:id="@+id/main_search_search_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="2dp"
+                android:background="@drawable/button_background_search"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="search"
+                android:textColor="@drawable/button_text_selector" />
+
+            <Button
+                android:id="@+id/main_search_advanced_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_advanced_background_normal"
+                android:text="+"
+                android:textColor="@drawable/button_text_selector" />
+        </LinearLayout>
+
+        <include layout="@layout/main_search_advanced" />
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="10dp"
+            android:fillViewport="true" >
+
+            <com.snowball.mangareader.interface_code.ExpandableHeightGridView
+                android:id="@+id/main_search_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:cacheColorHint="@android:color/transparent"
+                android:divider="@android:color/transparent"
+                android:fadingEdge="none"
+                android:listSelector="@android:color/transparent"
+                android:numColumns="1"
+                android:horizontalSpacing="4dp"
+                android:scrollbars="none"
+                android:verticalSpacing="4dp" >
+            </com.snowball.mangareader.interface_code.ExpandableHeightGridView>
+        </ScrollView>
+    </LinearLayout>
+
+</LinearLayout>
