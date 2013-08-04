@@ -402,7 +402,7 @@ public class DbAdapter extends SQLiteOpenHelper {
 	}
 	
 	public Cursor fetchSearchBaseByName(String key) {
-		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH FROM MangaReader_Main WHERE title LIKE '%"+ key +"%' ORDER BY title ASC", null);
+		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH,angaReader_Main WHERE title LIKE '%"+ key +"%' ORDER BY title ASC", null);
 	}
 	
 	public Cursor fetchLibraryBase() {

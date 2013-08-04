@@ -246,10 +246,13 @@ public class SearchActivity extends Activity {
 		mPopupCover.setVisibility(ImageView.VISIBLE);
 		mPopupCover.setImageBitmap(cover);
 		// Set genres string
-		String genres = MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
-		while (MangaReader.mGenresCursor.moveToNext()) {
-			genres += ", " + MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
-		}
+		String genres = "";
+		try {
+			genres = MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
+			while (MangaReader.mGenresCursor.moveToNext()) {
+				genres += ", " + MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
+			}
+		} catch (Exception e) {}
 		mPopupGenres.setText(genres);
 		// Get chapters from DB
 		MangaReader.mChapterCursor = MangaReader.mDbHelper.fetchChapters(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)));
