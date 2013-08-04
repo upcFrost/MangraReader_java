@@ -1,6 +1,9 @@
 package com.snowball.mangareader.db_code;
 
+import java.io.InputStream;
+
 import android.app.Activity;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.snowball.mangareader.CoverImageCoord;
+import com.snowball.mangareader.MangaReader;
 import com.snowball.mangareader.R;
 
 public class SearchGridAdapter extends BaseAdapter {
@@ -23,13 +28,14 @@ public class SearchGridAdapter extends BaseAdapter {
 		this.activity = activity;
 		setCursor(c);
 	}
-
+	
+	// ViewHolder for the search grid (title, author, cover image)	
 	static class SearchViewHolder {
 		TextView mTitle;
 		TextView mAuthor;
 		ImageView mCover;
 	}
-
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final SearchViewHolder viewHolder;
@@ -50,17 +56,28 @@ public class SearchGridAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (SearchViewHolder) convertView.getTag();
 		}
-		byte[] cover = getCursor().getBlob(
-				getCursor().getColumnIndex(DbAdapter.KEY_COVER_THUMB));
+		
+		// Get title string from DB
 		viewHolder.mTitle.setText(getCursor().getString(
 				getCursor().getColumnIndex(DbAdapter.KEY_TITLE)));
+		// Get author string from DB
 		viewHolder.mAuthor.setText(getCursor().getString(
 				getCursor().getColumnIndex(DbAdapter.KEY_AUTHOR)));
+		// Get cover integer values from DB
+		CoverImageCoord coords = new CoverImageCoord(getCursor());
+		// Get main bitmap from assets
+		Bitmap cover = Bitmap.createBitmap(MangaReader.mCoverImage, coords.x, 
+				coords.y, coords.w, coords.h);
+		// Set this bitmap to the imageView
+		viewHolder.mCover.setImageBitmap(cover);
 		
-		BitmapFactory.Options opt = new BitmapFactory.Options();
-		opt.inPreferredConfig = Bitmap.Config.RGB_565; // This'll lower memory usage
-		viewHolder.mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover,
-				0, cover.length));
+		// Create imageView from DB blob 
+//		byte[] cover = getCursor().getBlob(
+//				getCursor().getColumnIndex(DbAdapter.KEY_COVER_THUMB));
+//		BitmapFactory.Options opt = new BitmapFactory.Options();
+//		opt.inPreferredConfig = Bitmap.Config.RGB_565; // This'll lower memory usage
+//		viewHolder.mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover,
+//				0, cover.length));
 		return convertView;
 	}
 

@@ -26,6 +26,10 @@ public class DbAdapter extends SQLiteOpenHelper {
 	public static final String KEY_CHAPTER_COUNT = "chapter_count";
 	public static final String KEY_ONGOING = "ongoing";
 	public static final String KEY_COVER = "cover";
+	public static final String KEY_COVER_X = "coverX";
+	public static final String KEY_COVER_Y = "coverY";
+	public static final String KEY_COVER_W = "coverW";
+	public static final String KEY_COVER_H = "coverH";
 	public static final String KEY_COVER_THUMB = "cover_thumb";
 	public static final String KEY_COVER_URL = "cover_url";
 	public static final String KEY_FAVORITE = "favorite";
@@ -57,7 +61,7 @@ public class DbAdapter extends SQLiteOpenHelper {
 	public static final String KEY_DOWNLOAD_PERCENT = "chapter_download_percent";
 	public static final String KEY_DOWNLOAD_LAST_PAGE = "last_page";
 	// About DB
-	private static final String DATABASE_NAME = "MangaBase";
+	private static final String DATABASE_NAME = "MangaBase.db";
 	private static final String DATABASE_MAIN_TABLE = "MangaReader_Main";
 	private static final String DATABASE_GENRES_TABLE = "MangaReader_Genres";
 	private static final String DATABASE_GENRES_LINK_TABLE = "MangaReader_Genres_Link";
@@ -65,11 +69,11 @@ public class DbAdapter extends SQLiteOpenHelper {
 	private static final int DATABASE_VERSION = 1;
 	// DB File Handlers
 	private static final String DB_PATH = "/data/data/com.snowball.mangareader/databases/";
-	private static final String DB_NAME = "MangaBase";
+	private static final String DB_NAME = "MangaBase.db";
 	private SQLiteDatabase mDb;
 	private final Context mCtx;
 	// Common SQL
-	private static final String MAIN_TABLE_CREATE = "CREATE TABLE `MangaReader_Main` (`_id` INTEGER NOT NULL primary key autoincrement,`title` varchar(255) NOT NULL,`url_home` text NOT NULL,`author` text,`book_table` text,`local_path` text,`about` text,`rating` INTEGER   NULL,`chapter_count` INTEGER   NULL,`ongoing` INTEGER   NULL,`cover` longblob,`favorite` INTEGER   '0',`version` INTEGER NOT NULL);";
+	private static final String MAIN_TABLE_CREATE = "CREATE TABLE `MangaReader_Main` (`_id` INTEGER NOT NULL primary key autoincrement,`title` varchar(255) NOT NULL,`url_home` text NOT NULL,`author` text,`book_table` text,`local_path` text,`about` text,`rating` INTEGER   NULL,`chapter_count` INTEGER NULL,`ongoing` INTEGER NULL,`coverX` INTEGER,`coverY` INTEGER,`coverW` INTEGER,`coverH` INTEGER,`cover` longblob,`favorite` INTEGER   '0',`version` INTEGER NOT NULL);";
 	private static final String BOOK_DATABASE_CREATE_TEMP = "CREATE TABLE `{mTableName}`(`_id` INTEGER NOT NULL primary key autoincrement,`chapter_name` varchar(255) NOT NULL,`chapter_url` text NOT NULL,`chapter_num` float   NULL,`chapter_state` INTEGER   '0', `chapter_page_num` INTEGER '0', `chapter_download_percent` INTEGER '0',`version` INTEGER NOT NULL);";
 	private static final String GENRES_TABLE_CREATE = "CREATE TABLE `MangaReader_Genres` (`_id` INTEGER NOT NULL primary key autoincrement,`genre` varchar(255) NOT NULL,`version` INTEGER NOT NULL);";
 	private static final String GENRES_LINK_TABLE_CREATE = "CREATE TABLE `MangaReader_Genres_Link` (`genre_id` INTEGER   NULL,`manga_id` INTEGER   NULL,`version` INTEGER NOT NULL);";
@@ -394,11 +398,11 @@ public class DbAdapter extends SQLiteOpenHelper {
 
 	/** Fetch main database for search **/
 	public Cursor fetchSearchBase() {
-		return mDb.rawQuery("SELECT DISTINCT _id, title, author, cover_thumb FROM MangaReader_Main ORDER BY title ASC", null);
+		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH FROM MangaReader_Main ORDER BY title ASC", null);
 	}
 	
 	public Cursor fetchSearchBaseByName(String key) {
-		return mDb.rawQuery("SELECT DISTINCT _id, title, author, cover_thumb FROM MangaReader_Main WHERE title LIKE '%"+ key +"%' ORDER BY title ASC", null);
+		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH FROM MangaReader_Main WHERE title LIKE '%"+ key +"%' ORDER BY title ASC", null);
 	}
 	
 	public Cursor fetchLibraryBase() {

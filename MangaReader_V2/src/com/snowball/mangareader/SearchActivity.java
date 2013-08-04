@@ -78,6 +78,7 @@ public class SearchActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_search_tab);
 		
+		// Get interface
 		mGrid = (ExpandableHeightGridView)findViewById(R.id.main_search_list);
 		mAdvancedLayout = (RelativeLayout) findViewById(R.id.main_search_advanced_outer);
 		mAdvancedButton = (Button) findViewById(R.id.main_search_advanced_btn);
@@ -88,15 +89,15 @@ public class SearchActivity extends Activity {
 		mAdvancedNameExact = (RadioButton) findViewById(R.id.main_search_advanced_radioNameExact);
 		mAdvancedAuthorPart = (RadioButton) findViewById(R.id.main_search_advanced_radioAuthorPart);
 		mAdvancedAuthorExact = (RadioButton) findViewById(R.id.main_search_advanced_radioAuthorExact);
-		
+		// Set expanded to true for GridView
 		mGrid.setExpanded(true);
-		
+		// Get cursor from database
 		MangaReader.mBaseCursor = MangaReader.mDbHelper.fetchSearchBase();
 		MangaReader.mBaseCursor.moveToFirst();
-		
+		// Create DB adapter
 		adapter = new SearchGridAdapter(this, MangaReader.mBaseCursor);
 		mGrid.setAdapter(adapter);
-		
+		// Set onClick Listener that'll open a popUp if any field is pressed
 		mGrid.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -224,38 +225,33 @@ public class SearchActivity extends Activity {
 		mPopupGenres = (TextView)popupView.findViewById(R.id.main_search_popup_genre);
 		mPopupChapterNum = (TextView)popupView.findViewById(R.id.main_search_popup_count);
 		mPopupNoImage = (TextView) popupView.findViewById(R.id.main_search_popup_no_image);
-		
-		// Set GUI
+		// Grab DB adapters for book data and genre data
 		MangaReader.mBookCursor = MangaReader.mDbHelper.fetchMangaById(id);
 		MangaReader.mBookCursor.moveToFirst();
 		MangaReader.mGenresCursor = MangaReader.mDbHelper.fetchMangaGenres(id);
 		MangaReader.mGenresCursor.moveToFirst();
-		
+		// Set GUI text fields
 		mPopupTitle.setText(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_TITLE)));
 		mPopupAuthor.setText(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_AUTHOR)));
 		mPopupRatingBar.setRating(MangaReader.mBookCursor.getFloat(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_TITLE)));
 		String chapterNum = MangaReader.mBookCursor.getInt(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_ONGOING)) == 1 ? "Ongoing" : "Completed";
 		chapterNum += " (" + MangaReader.mBookCursor.getInt(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_CHAPTER_COUNT)) + ")";
 		mPopupChapterNum.setText(chapterNum);
-		
-		BitmapFactory.Options opt = new BitmapFactory.Options();
-		opt.inPreferredConfig = Bitmap.Config.RGB_565; // This'll lower memory usage
-		byte[] cover = MangaReader.mBookCursor.getBlob(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER));
-		if (cover != null) {
-			mPopupProgressBar.setVisibility(ProgressBar.GONE);
-			mPopupCover.setVisibility(ImageView.VISIBLE);
-			mPopupCover.setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
-		} else {
-			DownloadCover coverTask = new DownloadCover(id);
-			coverTask.execute(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER_URL)));
-		}
-		
+		// Get cover integer values from DB
+		CoverImageCoord coords = new CoverImageCoord(MangaReader.mBookCursor);
+		// Get main bitmap from assets
+		Bitmap cover = Bitmap.createBitmap(MangaReader.mCoverImage, coords.x,
+				coords.y, coords.w, coords.h);
+		mPopupProgressBar.setVisibility(ProgressBar.GONE);
+		mPopupCover.setVisibility(ImageView.VISIBLE);
+		mPopupCover.setImageBitmap(cover);
+		// Set genres string
 		String genres = MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
 		while (MangaReader.mGenresCursor.moveToNext()) {
 			genres += ", " + MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
 		}
 		mPopupGenres.setText(genres);
-		
+		// Get chapters from DB
 		MangaReader.mChapterCursor = MangaReader.mDbHelper.fetchChapters(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)));
 		adapter_popup = new ChapterListAdapter(popupView.getContext(), MangaReader.mChapterCursor, id, MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)));
 		mPopupList.setAdapter(adapter_popup);

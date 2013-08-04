@@ -3,7 +3,6 @@ package com.snowball.mangareader.db_code;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.snowball.mangareader.CoverImageCoord;
 import com.snowball.mangareader.MangaReader;
 import com.snowball.mangareader.R;
 import com.snowball.mangareader.interface_code.TextProgressBar;
@@ -72,20 +72,32 @@ public class LibraryGridAdapter extends BaseAdapter {
 			viewHolder.mProgress.setText("Download complete");
 			viewHolder.mProgress.setProgress(100);
 		}
-		viewHolder.mProgress.setTextSize(9);
-		
+		viewHolder.mProgress.setTextSize(9);		
+		// Get title title from DB
 		viewHolder.mTitle.setText(getCursor().getString(
 				getCursor().getColumnIndex(DbAdapter.KEY_TITLE)));
+		// Get author string from DB
 		viewHolder.mAuthor.setText(getCursor().getString(
 				getCursor().getColumnIndex(DbAdapter.KEY_AUTHOR)));
+		// Get rating integer from DB
 		viewHolder.mRating.setRating(getCursor().getInt(
 				getCursor().getColumnIndex(DbAdapter.KEY_RATING)));
-		byte[] cover = getCursor().getBlob(
-				getCursor().getColumnIndex(DbAdapter.KEY_COVER_THUMB));
-		BitmapFactory.Options opt = new BitmapFactory.Options();
-		opt.inPreferredConfig = Bitmap.Config.RGB_565; // This'll lower memory usage
-		viewHolder.mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover,
-				0, cover.length));
+		// Get cover integer values from DB
+		CoverImageCoord coords = new CoverImageCoord(getCursor());
+		// Get main bitmap from assets
+		Bitmap cover = Bitmap.createBitmap(MangaReader.mCoverImage, coords.x, 
+				coords.y, coords.w, coords.h);
+		// Set this bitmap to the imageView
+		viewHolder.mCover.setImageBitmap(cover);
+		
+		// Set cover bitmap (old)
+//		byte[] cover = getCursor().getBlob(
+//				getCursor().getColumnIndex(DbAdapter.KEY_COVER_THUMB));
+//		BitmapFactory.Options opt = new BitmapFactory.Options();
+//		opt.inPreferredConfig = Bitmap.Config.RGB_565; // This'll lower memory usage
+//		viewHolder.mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover,
+//				0, cover.length));
+		
 		return convertView;
 	}
 

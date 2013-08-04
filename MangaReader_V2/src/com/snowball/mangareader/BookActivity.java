@@ -51,11 +51,12 @@ public class BookActivity extends Activity {
 		setContentView(R.layout.book_screen);
 		Bundle extras = getIntent().getExtras();
 		id = extras.getLong("id");
+		// Load cursors from DB 
 		MangaReader.mBookCursor = MangaReader.mDbHelper.fetchMangaById(id);
 		MangaReader.mBookCursor.moveToFirst();
 		MangaReader.mGenresCursor = MangaReader.mDbHelper.fetchMangaGenres(id);
 		MangaReader.mGenresCursor.moveToFirst();
-		
+		// Grab GUI
 		mCover = (ImageView) findViewById(R.id.book_cover);
 		mTitle = (TextView) findViewById(R.id.book_title);
 		mAuthor = (TextView) findViewById(R.id.book_author);
@@ -67,20 +68,32 @@ public class BookActivity extends Activity {
 		mProgressBar = (ProgressBar)findViewById(R.id.book_progress_bar);
 		mChapterNum = (TextView) findViewById(R.id.book_count);
 		mNoImage = (TextView) findViewById(R.id.book_no_image);
+		// Get cover integer values from DB
+		CoverImageCoord coords = new CoverImageCoord(MangaReader.mBookCursor);
+		// Get main bitmap from assets
+		Bitmap cover = Bitmap.createBitmap(MangaReader.mCoverImage, coords.x, 
+				coords.y, coords.w, coords.h);
+		// Set this bitmap to the imageView
+		mCover.setImageBitmap(cover);
+		mCover.setVisibility(ImageView.VISIBLE);
+		mProgressBar.setVisibility(ProgressBar.GONE);
 		
-		byte[] cover = MangaReader.mBookCursor.getBlob(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER));
-		if (cover != null) {
-			mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
-			mCover.setVisibility(ImageView.VISIBLE);
-			mProgressBar.setVisibility(ProgressBar.GONE);
-		} else {
-			DownloadCover coverTask = new DownloadCover();
-			coverTask.execute(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER_URL)));
-		}
+		// Set cover (old)
+//		byte[] cover = MangaReader.mBookCursor.getBlob(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER));
+//		if (cover != null) {
+//			mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
+//			mCover.setVisibility(ImageView.VISIBLE);
+//			mProgressBar.setVisibility(ProgressBar.GONE);
+//		} else {
+//			DownloadCover coverTask = new DownloadCover();
+//			coverTask.execute(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER_URL)));
+//		}
 		
+		// Set text values from DB to GUI
 		mTitle.setText(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_TITLE)));
 		mAuthor.setText(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_AUTHOR)));
 		mAbout.setText(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_ABOUT)));
+		// Set genres array to GUI
 		String genres = MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
 		while (MangaReader.mGenresCursor.moveToNext()) {
 			genres += ", " + MangaReader.mGenresCursor.getString(MangaReader.mGenresCursor.getColumnIndex(DbAdapter.KEY_GENRES_NAME));
@@ -89,10 +102,12 @@ public class BookActivity extends Activity {
 		String chapterNum = MangaReader.mBookCursor.getInt(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_ONGOING)) == 1 ? "Ongoing" : "Completed";
 		chapterNum += " (" + MangaReader.mBookCursor.getInt(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_CHAPTER_COUNT)) + ")";
 		mChapterNum.setText(chapterNum);
+		// Get chapter list from DB and set it to the gridView
 		MangaReader.mChapterCursor = MangaReader.mDbHelper.fetchChapters(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)));
 		adapter = new ChapterListAdapter(this, MangaReader.mChapterCursor, id, MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)));
 		mList.setAdapter(adapter);
 		mList.setExpanded(true);
+		// Set about field max line count (when ellipsized)
 		mAbout.setMaxLines(3);
 		mRating.setRating(MangaReader.mBookCursor.getInt(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_RATING)));
 		mMoreBtn.setOnClickListener(new OnClickListener() {
