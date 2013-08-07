@@ -70,14 +70,7 @@ public class SearchGridAdapter extends BaseAdapter {
 				coords.y, coords.w, coords.h);
 		// Set this bitmap to the imageView
 		viewHolder.mCover.setImageBitmap(cover);
-		
-		// Create imageView from DB blob 
-//		byte[] cover = getCursor().getBlob(
-//				getCursor().getColumnIndex(DbAdapter.KEY_COVER_THUMB));
-//		BitmapFactory.Options opt = new BitmapFactory.Options();
-//		opt.inPreferredConfig = Bitmap.Config.RGB_565; // This'll lower memory usage
-//		viewHolder.mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover,
-//				0, cover.length));
+
 		return convertView;
 	}
 

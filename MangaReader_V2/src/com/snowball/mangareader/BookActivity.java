@@ -78,17 +78,6 @@ public class BookActivity extends Activity {
 		mCover.setVisibility(ImageView.VISIBLE);
 		mProgressBar.setVisibility(ProgressBar.GONE);
 		
-		// Set cover (old)
-//		byte[] cover = MangaReader.mBookCursor.getBlob(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER));
-//		if (cover != null) {
-//			mCover.setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
-//			mCover.setVisibility(ImageView.VISIBLE);
-//			mProgressBar.setVisibility(ProgressBar.GONE);
-//		} else {
-//			DownloadCover coverTask = new DownloadCover();
-//			coverTask.execute(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_COVER_URL)));
-//		}
-		
 		// Set text values from DB to GUI
 		mTitle.setText(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_TITLE)));
 		mAuthor.setText(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_AUTHOR)));

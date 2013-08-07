@@ -59,7 +59,9 @@ public class DbAdapter extends SQLiteOpenHelper {
 	public static final String KEY_DOWNLOAD_TITLE = "chapter_name";
 	public static final String KEY_DOWNLOAD_STATE = "chapter_state";
 	public static final String KEY_DOWNLOAD_PERCENT = "chapter_download_percent";
+	@Deprecated
 	public static final String KEY_DOWNLOAD_LAST_PAGE = "last_page";
+	public static final String KEY_DOWNLOAD_DM_ID = "dm_id";
 	// About DB
 	private static final String DATABASE_NAME = "MangaBase.db";
 	private static final String DATABASE_MAIN_TABLE = "MangaReader_Main";

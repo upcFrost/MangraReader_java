@@ -56,7 +56,6 @@ public class SearchActivity extends Activity {
 	public static ExpandableHeightGridView mPopupList;
 	public static ChapterListAdapter adapter_popup;
 	 
-	
 	private TextView mPopupTitle;
 	private TextView mPopupNoImage;
 	private ImageView mPopupCover;
@@ -79,16 +78,7 @@ public class SearchActivity extends Activity {
 		setContentView(R.layout.main_search_tab);
 		
 		// Get interface
-		mGrid = (ExpandableHeightGridView)findViewById(R.id.main_search_list);
-		mAdvancedLayout = (RelativeLayout) findViewById(R.id.main_search_advanced_outer);
-		mAdvancedButton = (Button) findViewById(R.id.main_search_advanced_btn);
-		mSearchButton = (Button) findViewById(R.id.main_search_search_btn);
-		mSearchText = (EditText) findViewById(R.id.main_search_textfield);
-		mAdvancedGrid = (ExpandableHeightGridView) findViewById(R.id.main_search_advanced_genresGrid);
-		mAdvancedNamePart = (RadioButton) findViewById(R.id.main_search_advanced_radioNamePart);
-		mAdvancedNameExact = (RadioButton) findViewById(R.id.main_search_advanced_radioNameExact);
-		mAdvancedAuthorPart = (RadioButton) findViewById(R.id.main_search_advanced_radioAuthorPart);
-		mAdvancedAuthorExact = (RadioButton) findViewById(R.id.main_search_advanced_radioAuthorExact);
+		grabGUI();
 		// Set expanded to true for GridView
 		mGrid.setExpanded(true);
 		// Get cursor from database
@@ -167,6 +157,20 @@ public class SearchActivity extends Activity {
 		return this.getParent().onKeyDown(keyCode, event);
 	}
 	
+	private void grabGUI() {
+		mGrid = (ExpandableHeightGridView)findViewById(R.id.main_search_list);
+		mAdvancedLayout = (RelativeLayout) findViewById(R.id.main_search_advanced_outer);
+		mAdvancedButton = (Button) findViewById(R.id.main_search_advanced_btn);
+		mSearchButton = (Button) findViewById(R.id.main_search_search_btn);
+		mSearchText = (EditText) findViewById(R.id.main_search_textfield);
+		mAdvancedGrid = (ExpandableHeightGridView) findViewById(R.id.main_search_advanced_genresGrid);
+		mAdvancedNamePart = (RadioButton) findViewById(R.id.main_search_advanced_radioNamePart);
+		mAdvancedNameExact = (RadioButton) findViewById(R.id.main_search_advanced_radioNameExact);
+		mAdvancedAuthorPart = (RadioButton) findViewById(R.id.main_search_advanced_radioAuthorPart);
+		mAdvancedAuthorExact = (RadioButton) findViewById(R.id.main_search_advanced_radioAuthorExact);
+	}
+	
+	
 	private class DownloadCover extends AsyncTask<String, Integer, Bitmap> {
 		
 		long id;
@@ -213,18 +217,7 @@ public class SearchActivity extends Activity {
 		// Grab GUI
 		LayoutInflater popupInflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 		View popupView = popupInflater.inflate(R.layout.main_search_popup, null);
-		mPopupTitle = (TextView) popupView.findViewById(R.id.main_search_popup_title);
-		mPopupCover = (ImageView) popupView.findViewById(R.id.main_search_popup_book_cover);
-		mPopupRatingBar = (RatingBar) popupView.findViewById(R.id.main_search_popup_rating);
-		mPopupList = (ExpandableHeightGridView) popupView.findViewById(R.id.main_search_popup_downloads_list);
-		mPopupAbout = (EllipsizingTextView) popupView.findViewById(R.id.main_search_popup_about);
-		mPopupAuthor = (TextView) popupView.findViewById(R.id.main_search_popup_author);
-		mPopupMoreInfo = (Button) popupView.findViewById(R.id.main_search_popup_more_btn);
-		mPopupProgressBar = (ProgressBar) popupView.findViewById(R.id.main_search_popup_progress_bar);
-		mScroll = (ScrollView)popupView.findViewById(R.id.main_search_popup_shadow);
-		mPopupGenres = (TextView)popupView.findViewById(R.id.main_search_popup_genre);
-		mPopupChapterNum = (TextView)popupView.findViewById(R.id.main_search_popup_count);
-		mPopupNoImage = (TextView) popupView.findViewById(R.id.main_search_popup_no_image);
+		grabPopupGUI(popupView);
 		// Grab DB adapters for book data and genre data
 		MangaReader.mBookCursor = MangaReader.mDbHelper.fetchMangaById(id);
 		MangaReader.mBookCursor.moveToFirst();
@@ -254,7 +247,7 @@ public class SearchActivity extends Activity {
 			}
 		} catch (Exception e) {}
 		mPopupGenres.setText(genres);
-		// Get chapters from DB
+		// Get chapters from DB and pass them to the adapter
 		MangaReader.mChapterCursor = MangaReader.mDbHelper.fetchChapters(MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)));
 		adapter_popup = new ChapterListAdapter(popupView.getContext(), MangaReader.mChapterCursor, id, MangaReader.mBookCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)));
 		mPopupList.setAdapter(adapter_popup);
@@ -291,6 +284,21 @@ public class SearchActivity extends Activity {
 				mScroll.scrollTo(0, 0);
 			}
 		});
+	}
+	
+	private void grabPopupGUI(View popupView) {
+		mPopupTitle = (TextView) popupView.findViewById(R.id.main_search_popup_title);
+		mPopupCover = (ImageView) popupView.findViewById(R.id.main_search_popup_book_cover);
+		mPopupRatingBar = (RatingBar) popupView.findViewById(R.id.main_search_popup_rating);
+		mPopupList = (ExpandableHeightGridView) popupView.findViewById(R.id.main_search_popup_downloads_list);
+		mPopupAbout = (EllipsizingTextView) popupView.findViewById(R.id.main_search_popup_about);
+		mPopupAuthor = (TextView) popupView.findViewById(R.id.main_search_popup_author);
+		mPopupMoreInfo = (Button) popupView.findViewById(R.id.main_search_popup_more_btn);
+		mPopupProgressBar = (ProgressBar) popupView.findViewById(R.id.main_search_popup_progress_bar);
+		mScroll = (ScrollView)popupView.findViewById(R.id.main_search_popup_shadow);
+		mPopupGenres = (TextView)popupView.findViewById(R.id.main_search_popup_genre);
+		mPopupChapterNum = (TextView)popupView.findViewById(R.id.main_search_popup_count);
+		mPopupNoImage = (TextView) popupView.findViewById(R.id.main_search_popup_no_image);
 	}
 	
 }

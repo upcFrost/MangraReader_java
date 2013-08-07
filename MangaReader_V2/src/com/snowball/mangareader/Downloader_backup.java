@@ -36,7 +36,7 @@ import com.snowball.mangareader.db_code.DbAdapter;
  * 
  */
 
-public class Downloader extends AsyncTask<Long, Integer, Boolean> {
+public class Downloader_backup extends AsyncTask<Long, Integer, Boolean> {
 	private String bookTable;
 	private String local_path;
 	public static long manga_id;
@@ -98,14 +98,14 @@ public class Downloader extends AsyncTask<Long, Integer, Boolean> {
 			manga_id = MangaReader.mDownloadsCursor.getLong(MangaReader.mDownloadsCursor.getColumnIndex(DbAdapter.KEY_DOWNLOAD_MANGA_ID));
 			chapter_id = MangaReader.mDownloadsCursor.getLong(MangaReader.mDownloadsCursor.getColumnIndex(DbAdapter.KEY_DOWNLOAD_CHAPTER_ID));
 			lastPage = MangaReader.mDownloadsCursor.getInt(MangaReader.mDownloadsCursor.getColumnIndex(DbAdapter.KEY_DOWNLOAD_LAST_PAGE));
-//			StringBuilder page = new StringBuilder();
-//			Matcher m;
-//			Pattern pic = Pattern.compile(".*<img src=\"(.*?goodmanga.net/images/manga.*?)[0-9]*.jpg.*?alt=.*?Page (.*?)\".*?>");
-//			Pattern total = Pattern.compile("</select>.*?<span>of ([0-9]*?)</span>");
-//			String line = null;
-//			String fullText = null;
-//			String commonURL = null;
-//			int pageTotal = 1;
+			StringBuilder page = new StringBuilder();
+			Matcher m;
+			Pattern pic = Pattern.compile(".*<img src=\"(.*?goodmanga.net/images/manga.*?)[0-9]*.jpg.*?alt=.*?Page (.*?)\".*?>");
+			Pattern total = Pattern.compile("</select>.*?<span>of ([0-9]*?)</span>");
+			String line = null;
+			String fullText = null;
+			String commonURL = null;
+			int pageTotal = 1;
 			Cursor mangaCursor = MangaReader.mDbHelper.fetchMangaById(manga_id);
 			mangaCursor.moveToFirst();
 			Cursor chapterCursor = MangaReader.mDbHelper.fetchChapterById(mangaCursor.getString(mangaCursor.getColumnIndex(DbAdapter.KEY_BOOK_TABLE)),chapter_id);
@@ -121,62 +121,56 @@ public class Downloader extends AsyncTask<Long, Integer, Boolean> {
 			// Initialize download of the first page
 			String url = chapterCursor.getString(chapterCursor.getColumnIndex(DbAdapter.KEY_BOOK_URL));
 			try {
-//				HttpClient client = new DefaultHttpClient();
-//				HttpGet request = new HttpGet();
-//				request.setURI(new URI(url));
-//				HttpResponse response = client.execute(request);
-//				InputStream in = response.getEntity().getContent();
-//				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//				// Downloading the page EXCEPT linebrakes (because of using
-//				// "dot")
-//				while ((line = reader.readLine()) != null) {
-//					if (currentDownloading == StaticValues.DOWNLOADING) {
-//						page.append(line);
-//					} else {
-//						break;
-//					}					
-//				}
-//				// Check if was not canceled
-//				if (currentDownloading != StaticValues.DOWNLOADING) {
-//					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, currentDownloading, -1, -1,-1, -1);
-//					continue;
-//				}
-//				fullText = page.toString();
-//
-//				// Now analyzing what we've downloaded
-//				m = total.matcher(fullText);
-//				if (m.find()) {
-//					pageTotal = Integer.decode(m.group(1));
-//					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, -1, -1, pageTotal, -1, -1);
-//					//publishProgress(0);
-//				} else {
-//					System.out.println("Downloader: 'total' pattern failed");
-//					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, StaticValues.NOT_DOWNLOADING, -1, -1,	-1, -1);
-//					publishProgress(0);
-//					continue;
-//				}
-//
-//				m = pic.matcher(fullText);
-//				if (m.find()) {
-//					commonURL = m.group(1);
-//				} else {
-//					System.out.println("Downloader: 'pic' pattern failed");
-//					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, StaticValues.NOT_DOWNLOADING, -1, -1,	-1, -1);
-//					publishProgress(0);
-//					continue;
-//				}
+				HttpClient client = new DefaultHttpClient();
+				HttpGet request = new HttpGet();
+				request.setURI(new URI(url));
+				HttpResponse response = client.execute(request);
+				InputStream in = response.getEntity().getContent();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+				// Downloading the page EXCEPT linebrakes (because of using
+				// "dot")
+				while ((line = reader.readLine()) != null) {
+					if (currentDownloading == StaticValues.DOWNLOADING) {
+						page.append(line);
+					} else {
+						break;
+					}					
+				}
+				// Check if was not canceled
+				if (currentDownloading != StaticValues.DOWNLOADING) {
+					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, currentDownloading, -1, -1,-1, -1);
+					continue;
+				}
+				fullText = page.toString();
 
-				/****/
-				// Temp fix
-				String commonURL = "http://10.100.125.49/MangaReader_php/grabbed/.hack4koma%20Chapter%201.jpg";
-				int pageTotal = 1;
-				//
-				/****/
+				// Now analyzing what we've downloaded
+				m = total.matcher(fullText);
+				if (m.find()) {
+					pageTotal = Integer.decode(m.group(1));
+					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, -1, -1, pageTotal, -1, -1);
+					//publishProgress(0);
+				} else {
+					System.out.println("Downloader: 'total' pattern failed");
+					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, StaticValues.NOT_DOWNLOADING, -1, -1,	-1, -1);
+					publishProgress(0);
+					continue;
+				}
+
+				m = pic.matcher(fullText);
+				if (m.find()) {
+					commonURL = m.group(1);
+				} else {
+					System.out.println("Downloader: 'pic' pattern failed");
+					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, StaticValues.NOT_DOWNLOADING, -1, -1,	-1, -1);
+					publishProgress(0);
+					continue;
+				}
+
 				String filePath = local_path+ "/"+ chapterCursor.getInt(chapterCursor.getColumnIndex(DbAdapter.KEY_BOOK_NUM)) + "/";
 
 				boolean downloaded = true;
 				for (int pageNumber = lastPage; pageNumber <= pageTotal; pageNumber++) {
-					String downloadURL = commonURL;
+					String downloadURL = commonURL + pageNumber + ".jpg";
 					String fileName = pageNumber + ".jpg";
 					if (!downloadURL(downloadURL, pageTotal, pageNumber, filePath,fileName) || currentDownloading != StaticValues.DOWNLOADING) {
 						downloaded = false;
@@ -203,7 +197,9 @@ public class Downloader extends AsyncTask<Long, Integer, Boolean> {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,null, null, StaticValues.NOT_DOWNLOADING, -1, -1, -1,	-1);
+				MangaReader.mDbHelper.updateChapter(bookTable, chapter_id,
+						null, null, StaticValues.NOT_DOWNLOADING, -1, -1, -1,
+						-1);
 				publishProgress(0);
 				continue;
 			}
@@ -224,12 +220,14 @@ public class Downloader extends AsyncTask<Long, Integer, Boolean> {
 			SearchActivity.adapter.notifyDataSetChanged();
 		}
 		if (SearchActivity.adapter_popup != null) {
-			MangaReader.mChapterCursor = MangaReader.mDbHelper.fetchChapters(bookTable);
+			MangaReader.mChapterCursor = MangaReader.mDbHelper
+					.fetchChapters(bookTable);
 			SearchActivity.adapter_popup.setCursor(MangaReader.mChapterCursor);
 			SearchActivity.adapter_popup.notifyDataSetChanged();
 		}
 		if (BookActivity.adapter != null) {
-			MangaReader.mChapterCursor = MangaReader.mDbHelper.fetchChapters(bookTable);
+			MangaReader.mChapterCursor = MangaReader.mDbHelper
+					.fetchChapters(bookTable);
 			BookActivity.adapter.setCursor(MangaReader.mChapterCursor);
 			BookActivity.adapter.notifyDataSetChanged();
 		}
@@ -273,7 +271,6 @@ public class Downloader extends AsyncTask<Long, Integer, Boolean> {
 				} else {
 					MangaReader.mDbHelper.updateChapter(bookTable, chapter_id, null,
 							null, currentDownloading, -1, -1, -1, -1);
-					output.close();
 					return false;
 				}
 			}

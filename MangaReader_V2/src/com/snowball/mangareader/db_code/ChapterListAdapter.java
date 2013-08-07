@@ -1,9 +1,11 @@
 package com.snowball.mangareader.db_code;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -246,6 +248,17 @@ public class ChapterListAdapter extends BaseAdapter {
 					MangaReader.mDbHelper.addDownload(mangaId, chapterId,title, StaticValues.DOWNLOADING, 0);
 					setDownloadingView(viewHolder, position);
 					Main.notifyAdapters(bookTable);
+					
+					// Use download manager to grab chapter
+					// TODO: Make it work
+//					String URL = MangaReader.mChapterCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_URL));
+//					String Title = MangaReader.mChapterCursor.getString(MangaReader.mBookCursor.getColumnIndex(DbAdapter.KEY_BOOK_TITLE));
+//					DownloadManager.Request request = new DownloadManager.Request(Uri.parse(URL));
+//					request.setTitle(Title);
+//					DownloadManager manager = (DownloadManager) MangaReader.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+//					long downloadId = manager.enqueue(request);
+//					MangaReader.mDbHelper.addDownload(mangaId, chapterId, downloadId);
+//					Main.notifyAdapters(bookTable);
 				}
 			}
 		});
