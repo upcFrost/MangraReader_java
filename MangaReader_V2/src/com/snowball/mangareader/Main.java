@@ -57,28 +57,28 @@ public class Main extends TabActivity implements OnMenuItemSelectedListener {
         
         tabhost = getTabHost();
         
-        /** Add library tab **/
+//        Add library tab
         intent = new Intent().setClass(this, LibraryActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         indicator = getLayoutInflater().inflate(R.layout.library_tab_indicator, null);
         spec = tabhost.newTabSpec("library").setIndicator(indicator).setContent(intent);
         tabhost.addTab(spec);
         LIBRARY_TAG = spec.getTag();
         
-        /** Add search tab **/
+//        Add search tab
         intent = new Intent().setClass(this, SearchActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         indicator = getLayoutInflater().inflate(R.layout.search_tab_indicator, null);
         spec = tabhost.newTabSpec("search").setIndicator(indicator).setContent(intent);
         tabhost.addTab(spec);
         SEARCH_TAG = spec.getTag();
         
-        /** Add custom options menu **/
+//        Add custom options menu
         mMenu = new CustomMenu(this, this, getLayoutInflater());
         mMenu.setHideOnSelect(true);
         mMenu.setItemsPerLineInLandscapeOrientation(4);
         mMenu.setItemsPerLineInPortraitOrientation(4);
         loadMenuItems();
         
-        /** Add OnTabChangedListener **/
+//        Add OnTabChangedListener
         tabhost.setOnTabChangedListener(new OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabTag) {

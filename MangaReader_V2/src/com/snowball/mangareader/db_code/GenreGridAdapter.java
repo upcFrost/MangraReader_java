@@ -48,7 +48,7 @@ public class GenreGridAdapter extends BaseAdapter {
 				.getLong(getCursor().getColumnIndex(DbAdapter.KEY_GENRES_ID));
 	}
 
-	static class GenreViewHolder {
+	public static class GenreViewHolder {
 		RadioButton genreButton;
 	}
 	

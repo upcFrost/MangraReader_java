@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.polites.android.GestureImageView;
 import com.snowball.mangareader.db_code.DbAdapter;
@@ -95,17 +96,25 @@ public class ImageActivity extends Activity {
 		leftButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (pageSet(pageArray.get(currentPage-1))) {
+				if (currentPage > 0) {
+					pageSet(pageArray.get(currentPage-1));
 					currentPage--;
-				}	
+				} else {
+					// TODO: load/ask to download the next chapter
+					Toast.makeText(getApplicationContext(), "First page", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 		rightButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (pageSet(pageArray.get(currentPage+1))) {
+				if (currentPage < pageArray.size()-1) {
+					pageSet(pageArray.get(currentPage+1));
 					currentPage++;
-				}	
+				} else {
+					// TODO: load/ask to download the next chapter
+					Toast.makeText(getApplicationContext(), "Last page", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 		gotoButton.setOnClickListener(gotoPageListener);
@@ -121,15 +130,6 @@ public class ImageActivity extends Activity {
 		// Clean memory from previous bitmap
 		System.gc();
 		return true;
-		// TODO Check and clean
-//		File imgFile = new File(dirName+"/"+ pageNum +".jpg");
-//		if (imgFile.exists()) {
-//			Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-//			picture.setImageBitmap(bitmap);
-//			pageNumButton.setText("Page " + pageNum + " of " + totalPageNum);
-//			return true;
-//		}
-//		return false;
 	}
 	
 	

@@ -404,7 +404,16 @@ public class DbAdapter extends SQLiteOpenHelper {
 	}
 	
 	public Cursor fetchSearchBaseByName(String key) {
-		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH,angaReader_Main WHERE title LIKE '%"+ key +"%' ORDER BY title ASC", null);
+		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH FROM MangaReader_Main WHERE title LIKE '%"+ key +"%' ORDER BY title ASC", null);
+	}
+	
+	public Cursor fetchSearchBaseByNameWithGenre(String key, byte genre_id) {
+		String q = "SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH FROM MangaReader_Main JOIN MangaReader_Genres_Link ON MangaReader_Genres_Link.manga_id = MangaReader_Main._id WHERE title LIKE '%"+ key +"%' AND genre_id = " + genre_id + " ORDER BY title ASC";
+		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH FROM MangaReader_Main JOIN MangaReader_Genres_Link ON MangaReader_Genres_Link.manga_id = MangaReader_Main._id WHERE title LIKE '%"+ key +"%' AND genre_id = " + genre_id + " ORDER BY title ASC", null);
+	}
+	
+	public Cursor fetchSearchBaseByExactName(String key) {
+		return mDb.rawQuery("SELECT DISTINCT _id, title, author, coverX, coverY, coverW, coverH FROM MangaReader_Main WHERE title LIKE '"+ key +"' ORDER BY title ASC", null);
 	}
 	
 	public Cursor fetchLibraryBase() {

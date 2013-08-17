@@ -39,16 +39,21 @@ import android.widget.TextView;
 import com.snowball.mangareader.db_code.ChapterListAdapter;
 import com.snowball.mangareader.db_code.DbAdapter;
 import com.snowball.mangareader.db_code.GenreGridAdapter;
+import com.snowball.mangareader.db_code.GenreGridAdapter.GenreViewHolder;
 import com.snowball.mangareader.db_code.SearchGridAdapter;
 import com.snowball.mangareader.interface_code.EllipsizingTextView;
 import com.snowball.mangareader.interface_code.ExpandableHeightGridView;
 
 public class SearchActivity extends Activity {
 	
-	private Button mAdvancedButton;
 	private RelativeLayout mAdvancedLayout;
 	private Button mSearchButton;
+	private Button mAdvancedButton;
+	private Button mAdvSearchNameButton;
+	private Button mAdvSearchAuthorButton;
 	private EditText mSearchText;
+	private EditText mSearchNameText;
+	private EditText mSearchAuthorText;
 	public TextView mPopupGenres;
 	public TextView mPopupChapterNum;
 	public static ExpandableHeightGridView mGrid;
@@ -95,6 +100,7 @@ public class SearchActivity extends Activity {
 				createPopup(id);
 			}
 		});
+		// If clicked on general search button
 		mSearchButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -103,21 +109,27 @@ public class SearchActivity extends Activity {
 					adapter.setCursor(MangaReader.mBaseCursor);
 					adapter.notifyDataSetChanged();
 				} else {
-					boolean namePart = mAdvancedNamePart.isChecked() ? true : false;
-					boolean authorPart = mAdvancedAuthorPart.isChecked() ? true : false;
+					// Make advanced search button invisible
+					mAdvancedLayout.setVisibility(View.GONE);
+					mAdvancedButton.setBackgroundDrawable(
+							getResources().getDrawable(R.drawable.button_advanced_background_normal));
+					mAdvancedButton.setTextColor(getResources().getColorStateList(R.drawable.button_text_selector));
+					makeAdvancedNameSearch();
 				}
 			}
 		});
+		// If advanced search "plus" button was pressed
 		mAdvancedButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Make it visible if not already
 				if (mAdvancedLayout.getVisibility() == View.GONE) {
 					mAdvancedLayout.setVisibility(View.VISIBLE);
 					mAdvancedButton.setBackgroundDrawable(
 							getResources().getDrawable(R.drawable.button_advanced_background_pressed));
 					mAdvancedButton.setTextColor(Color.parseColor("#4abcde"));
-					
 				} else {
+					// Else make it invisible
 					mAdvancedLayout.setVisibility(View.GONE);
 					mAdvancedButton.setBackgroundDrawable(
 							getResources().getDrawable(R.drawable.button_advanced_background_normal));
@@ -152,6 +164,53 @@ public class SearchActivity extends Activity {
 		}, 100);
 	}
 
+	protected void makeAdvancedNameSearch() {
+		// First check if we're also using genre or rating search
+		byte genre_id = checkGenres();
+		// I'll use mSearchNameText, and if it's empty - then i'll use mSearchText
+		String searchText = mSearchNameText.getText().toString();
+		if (searchText.equals("")) {
+			searchText = mSearchText.getText().toString();
+		} else {
+			// Set the main edit line to that text
+			mSearchText.setText(searchText);
+		}
+		// Now check which radiobutton is checked
+		if (mAdvancedNamePart.isChecked()) {
+			// If "part of name" one - check if genre_id == -1 and return the corresponding query 
+			if (genre_id != -1) {
+				MangaReader.mBaseCursor = MangaReader.mDbHelper.fetchSearchBaseByNameWithGenre(searchText, genre_id);
+			} else {
+				MangaReader.mBaseCursor = MangaReader.mDbHelper.fetchSearchBaseByName(searchText);
+			}
+			adapter.setCursor(MangaReader.mBaseCursor);
+			adapter.notifyDataSetChanged();
+		} else {
+			MangaReader.mBaseCursor = MangaReader.mDbHelper.fetchSearchBaseByExactName(searchText);
+			adapter.setCursor(MangaReader.mBaseCursor);
+			adapter.notifyDataSetChanged();
+		}
+	}
+
+	private byte checkGenres() {
+		// Using byte for memory economy
+		byte count = (byte) mAdvancedGrid.getCount();
+		// Check currenly active radiobutton
+		for (byte i = 0; i < count; i++) {
+			if ( ((RadioButton) 
+					((RelativeLayout) mAdvancedGrid.getChildAt(i)).getChildAt(0)
+				).isChecked() ) {
+				GenreGridAdapter a = (GenreGridAdapter) mAdvancedGrid.getAdapter();
+				RelativeLayout container = (RelativeLayout) mAdvancedGrid.getChildAt(i);
+				RadioButton btn = (RadioButton) container.getChildAt(0);
+				int position = (Integer) btn.getTag();
+				byte genre_id = (byte) a.getItemId(position);
+				return genre_id;
+			}
+		}
+		return -1;
+	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		return this.getParent().onKeyDown(keyCode, event);
@@ -160,10 +219,18 @@ public class SearchActivity extends Activity {
 	private void grabGUI() {
 		mGrid = (ExpandableHeightGridView)findViewById(R.id.main_search_list);
 		mAdvancedLayout = (RelativeLayout) findViewById(R.id.main_search_advanced_outer);
+		// Buttons
 		mAdvancedButton = (Button) findViewById(R.id.main_search_advanced_btn);
 		mSearchButton = (Button) findViewById(R.id.main_search_search_btn);
+		mAdvSearchNameButton = (Button) findViewById(R.id.main_search_advanced_name_editButton);
+		mAdvSearchAuthorButton = (Button) findViewById(R.id.main_search_advanced_author_editButton);
+		// EditText fields
 		mSearchText = (EditText) findViewById(R.id.main_search_textfield);
+		mSearchNameText = (EditText) findViewById(R.id.main_search_advanced_name_editText);
+		mSearchAuthorText = (EditText) findViewById(R.id.main_search_advanced_author_editText);
+		// Advanced search genres grid
 		mAdvancedGrid = (ExpandableHeightGridView) findViewById(R.id.main_search_advanced_genresGrid);
+		// Non-list radiobuttons
 		mAdvancedNamePart = (RadioButton) findViewById(R.id.main_search_advanced_radioNamePart);
 		mAdvancedNameExact = (RadioButton) findViewById(R.id.main_search_advanced_radioNameExact);
 		mAdvancedAuthorPart = (RadioButton) findViewById(R.id.main_search_advanced_radioAuthorPart);
@@ -171,45 +238,45 @@ public class SearchActivity extends Activity {
 	}
 	
 	
-	private class DownloadCover extends AsyncTask<String, Integer, Bitmap> {
-		
-		long id;
-		
-		public DownloadCover(long id) {
-			this.id = id;
-		}
-		
-		@Override
-		protected Bitmap doInBackground(String... params) {
-			try {
-				URL url = new URL(params[0]);
-            	URLConnection connection = url.openConnection();
-            	connection.connect();
-            	InputStream input = new BufferedInputStream(url.openStream());
-            	Bitmap cover = BitmapFactory.decodeStream(input);
-            	input.close();
-            	return cover;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			if (result != null) {
-				mPopupCover.setImageBitmap(result);
-				mPopupCover.setVisibility(ImageView.VISIBLE);
-				mPopupProgressBar.setVisibility(ProgressBar.GONE);
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				result.compress(CompressFormat.PNG, 0, stream);
-				MangaReader.mDbHelper.updateManga(id, null, null, null, null, null, null, -1, -1, -1, stream.toByteArray(), -1, -1);
-			} else {
-				mPopupNoImage.setVisibility(TextView.VISIBLE);
-				mPopupProgressBar.setVisibility(ProgressBar.GONE);
-			}
-		}	
-	}
+//	private class DownloadCover extends AsyncTask<String, Integer, Bitmap> {
+//		
+//		long id;
+//		
+//		public DownloadCover(long id) {
+//			this.id = id;
+//		}
+//		
+//		@Override
+//		protected Bitmap doInBackground(String... params) {
+//			try {
+//				URL url = new URL(params[0]);
+//            	URLConnection connection = url.openConnection();
+//            	connection.connect();
+//            	InputStream input = new BufferedInputStream(url.openStream());
+//            	Bitmap cover = BitmapFactory.decodeStream(input);
+//            	input.close();
+//            	return cover;
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				return null;
+//			}
+//		}
+//
+//		@Override
+//		protected void onPostExecute(Bitmap result) {
+//			if (result != null) {
+//				mPopupCover.setImageBitmap(result);
+//				mPopupCover.setVisibility(ImageView.VISIBLE);
+//				mPopupProgressBar.setVisibility(ProgressBar.GONE);
+//				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//				result.compress(CompressFormat.PNG, 0, stream);
+//				MangaReader.mDbHelper.updateManga(id, null, null, null, null, null, null, -1, -1, -1, stream.toByteArray(), -1, -1);
+//			} else {
+//				mPopupNoImage.setVisibility(TextView.VISIBLE);
+//				mPopupProgressBar.setVisibility(ProgressBar.GONE);
+//			}
+//		}	
+//	}
 	
 	private void createPopup(long id) {
 		// Set restore flags
